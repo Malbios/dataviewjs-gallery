@@ -1,0 +1,21 @@
+{
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.tabSize": 4,
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "always",
+		"source.fixAll.eslint": "always"
+	},
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"typescript.validate.enable": true,
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+	"eslint.validate": [
+		"typescript"
+	],
+	"files.exclude": {
+		"node_modules": true,
+		"dist": true,
+		"out-tsc": true,
+	},
+}

@@ -1,0 +1,39 @@
+{
+	"name": "gallery",
+	"version": "1.0.0",
+	"main": "gallery.js",
+	"type": "module",
+	"scripts": {
+		"lint": "eslint . --ext .ts",
+		"lint:fix": "eslint . --ext .ts --fix",
+		"clean:tsc": "rimraf out-tsc",
+		"clean:dist": "rimraf dist",
+		"clean:vault": "dotenv -e .env -- cmd /c \"npx rimraf %SCRIPTS_VAULT_PATH%\"",
+		"clean": "npm run clean:tsc && npm run clean:dist && npm run clean:vault",
+		"tsc": "tsc",
+		"build": "npm run tsc && node bundle.mjs",
+		"rebuild": "npm run clean && npm run build",
+		"distribute": "node distribute.mjs",
+		"build-and-distribute": "npm run build && npm run distribute",
+		"bd": "npm run build-and-distribute",
+		"rebuild-and-distribute": "npm run rebuild && npm run distribute",
+		"rebd": "npm run rebuild-and-distribute",
+		"publish": "npm run lint:fix && npm run rebuild && npm run distribute"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@eslint/js": "^9.29.0",
+		"@typescript-eslint/eslint-plugin": "^8.34.1",
+		"@typescript-eslint/parser": "^8.34.1",
+		"cpy-cli": "^5.0.0",
+		"dotenv-cli": "^8.0.0",
+		"esbuild": "^0.25.5",
+		"eslint": "^9.29.0",
+		"obsidian": "^1.8.7",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.8.3"
+	}
+}

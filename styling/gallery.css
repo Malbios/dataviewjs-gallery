@@ -1,0 +1,80 @@
+.gallery-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.gallery-container button {
+	all: unset;
+	cursor: pointer;
+	user-select: none;
+	transition: transform 0.1s ease;
+}
+
+.gallery-container button:hover {
+	filter: brightness(1.1);
+}
+
+.gallery-container button:active:not(:disabled) {
+	transform: scale(0.95);
+}
+
+.gallery-container button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.gallery-pagination-controls {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 0.4rem;
+	gap: 10px;
+}
+
+.gallery-pagination-controls button {
+	transform: scale(150%);
+}
+
+.gallery-pagination-controls-text {
+	text-align: center;
+	font-size: 0.9rem;
+	user-select: none;
+}
+
+.gallery-row {
+	display: flex;
+	align-items: end;
+	justify-content: center;
+	gap: 16px;
+	margin-bottom: 10px;
+}
+
+.gallery-floating-refresh-button {
+	position: fixed;
+	top: 3rem;
+	left: 1.3rem;
+	z-index: 998;
+	display: block;
+	max-width: 90vw;
+	transform: scale(150%);
+}
+
+.gallery-floating-settings-toggler {
+	position: fixed;
+	top: 5.5rem;
+	left: 1.3rem;
+	z-index: 998;
+	display: block;
+	max-width: 90vw;
+	transform: scale(150%);
+}
+
+/* body.is-popout-window .workspace-tab-header-container,
+body.is-popout-window .metadata-breadcrumb,
+body.is-popout-window .titlebar,
+body.is-popout-window .view-header {
+	display: none !important;
+} */

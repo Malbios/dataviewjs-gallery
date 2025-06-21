@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "es2020",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"outDir": "./out-tsc",
+		"sourceMap": true,
+		"noEmit": false,
+		"noEmitOnError": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitAny": true,
+		"skipLibCheck": false,
+		"declaration": false,
+		"removeComments": true,
+		"lib": [
+			"es2020",
+			"dom"
+		]
+	},
+	"include": [
+		"src"
+	]
+}

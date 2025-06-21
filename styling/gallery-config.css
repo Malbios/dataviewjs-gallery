@@ -1,0 +1,81 @@
+.gallery-config-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 999;
+	display: none;
+}
+
+.gallery-config-controls {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: var(--background-secondary);
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	display: none;
+	max-width: 90vw;
+	max-height: 90vh;
+	overflow: auto;
+	user-select: none;
+}
+
+.gallery-config-controls.active {
+	display: block;
+}
+
+.gallery-config-controls-title {
+	text-align: center;
+}
+
+.gallery-config-controls-items {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.gallery-config-controls-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	line-height: 1;
+
+	background: var(--background-secondary-alt);
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.gallery-config-controls-item input[type="checkbox"] {
+	position: relative;
+	top: 1px;
+}
+
+.gallery-config-controls-view-mode {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.radio-control-items {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+}
+
+.radio-control-item {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+}
+
+.radio-control-item input[type="radio"] {
+	position: relative;
+	top: 2px;
+}
