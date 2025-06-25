@@ -15,5 +15,5 @@ if (!STYLING_VAULT_PATH) {
 }
 
 execSync(`npx cpy ./dist/gallery.js "${SCRIPTS_VAULT_PATH}"`, { stdio: 'inherit' })
-execSync(`npx cpy ./src/config.json "${SCRIPTS_VAULT_PATH}"`, { stdio: 'inherit' })
-execSync(`npx cpy ./styling/* "${STYLING_VAULT_PATH}"`, { stdio: 'inherit' })
+execSync(`npx cpy ./files/config.json "${SCRIPTS_VAULT_PATH}"`, { stdio: 'inherit' })
+execSync(`npx cpy ./files/styling/* "${STYLING_VAULT_PATH}"`, { stdio: 'inherit' })

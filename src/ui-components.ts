@@ -1,8 +1,8 @@
 import { asTFile, createUniqueId, updatePersistedConfigValue } from './common'
 import { Setting, ViewMode } from './constants'
-import { renderButton, renderCheckboxInput, renderImage, renderLabel, renderRadioInput, renderText } from './html-nodes'
+import { renderButton, renderCheckboxInput, renderImage, renderLabel, renderRadioInput, renderText } from './html'
 import { DataviewPage } from './interfaces'
-import { Config } from './types'
+import { Configuration, PersistedConfigurations, PersistedPresetSettings } from './types'
 
 let configsPanel: HTMLDivElement = document.createElement('div')
 let configsBackdrop: HTMLDivElement = document.createElement('div')
@@ -108,15 +108,16 @@ function renderImageComponent(parent: HTMLDivElement, page: DataviewPage) {
 	parent.appendChild(containerNode)
 }
 
-function renderPaginationComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Config) {
+function renderPaginationComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Configuration) {
 
 	function changePage(newPageNum: number) {
 		config[Setting.CURRENT_PAGE_NUM] = newPageNum
 		renderPageComponent(paginationContainer, tilesContainer, config)
 	}
 
-	const paginationText =
-		`Page ${config[Setting.CURRENT_PAGE_NUM]} of ${config[Setting.TOTAL_PAGES]} (Total Items: ${config[Setting.ITEMS].length})`
+	const paginationText = `${config[Setting.CURRENT_PAGE_NUM]} of ${config[Setting.TOTAL_PAGES]}`
+
+	const paginationTooltip = `${config[Setting.ITEMS].length} items total`
 
 	renderButton(paginationContainer, '⏮️', () => changePage(1),
 		'Go to first page', config[Setting.CURRENT_PAGE_NUM] === 1)
@@ -124,7 +125,7 @@ function renderPaginationComponent(paginationContainer: HTMLDivElement, tilesCon
 	renderButton(paginationContainer, '⬅', () => changePage(--config[Setting.CURRENT_PAGE_NUM]),
 		'Go to previous page', config[Setting.CURRENT_PAGE_NUM] === 1)
 
-	renderText(paginationContainer, 'gallery-pagination-controls-text', paginationText)
+	renderText(paginationContainer, 'gallery-pagination-controls-text', paginationText, paginationTooltip)
 
 	renderButton(paginationContainer, '➡', () => changePage(++config[Setting.CURRENT_PAGE_NUM]),
 		'Go to next page', config[Setting.CURRENT_PAGE_NUM] === config[Setting.TOTAL_PAGES])
@@ -210,7 +211,7 @@ function renderTileComponent(rowContainer: HTMLDivElement, page: DataviewPage, s
 	rowContainer.appendChild(tile)
 }
 
-export function renderSidebarComponent(parent: HTMLDivElement, config: Config) {
+export function renderSidebarComponent(parent: HTMLDivElement, config: Configuration) {
 
 	renderButton(parent, '🔁', async () => await config[Setting.RESET_GALLERY](),
 		'Refresh gallery', false, 'gallery-floating-refresh-button')
@@ -235,7 +236,12 @@ function renderConfigurationBackdrop(parent: HTMLDivElement) {
 	parent.appendChild(configsBackdrop)
 }
 
-function renderConfigurationComponent(parent: HTMLDivElement, config: Config) {
+function renderConfigurationComponent(parent: HTMLDivElement, config: Configuration) {
+
+	async function updateConfigValue<K extends keyof PersistedPresetSettings>(name: K, newValue: PersistedPresetSettings[K]) {
+		await updatePersistedConfigValue(config[Setting.PRESET] as keyof PersistedConfigurations, name, newValue)
+		await config[Setting.RESET_GALLERY]()
+	}
 
 	renderConfigurationBackdrop(parent)
 
@@ -252,26 +258,27 @@ function renderConfigurationComponent(parent: HTMLDivElement, config: Config) {
 	const containerNode = document.createElement('div')
 	containerNode.className = 'gallery-config-controls-items'
 
-	async function updatePersistedValue<T>(name: string, value: T) {
-		await updatePersistedConfigValue(name, value)
-		await config[Setting.RESET_GALLERY]()
-	}
-
 	renderRadioComponent(containerNode, 'gallery-config-controls-item gallery-config-controls-view-mode', 'View Mode',
 		[ViewMode.ALL, ViewMode.SFW, ViewMode.NSFW],
 		() => config[Setting.VIEW_MODE],
-		async (newValue: string) => await updatePersistedValue(Setting.VIEW_MODE, newValue))
+		async (newValue: string) => {
+			await updateConfigValue(Setting.VIEW_MODE, newValue)
+			await config[Setting.RESET_GALLERY]()
+		})
 
 	renderCheckboxComponent(containerNode, 'gallery-config-controls-item gallery-config-controls-tags', 'Show Tags',
 		() => config[Setting.SHOW_TAGS],
-		async (newValue: boolean) => await updatePersistedValue(Setting.SHOW_TAGS, newValue))
+		async (newValue: boolean) => {
+			await updateConfigValue(Setting.SHOW_TAGS, newValue)
+			await config[Setting.RESET_GALLERY]()
+		})
 
 	configsPanel.appendChild(containerNode)
 
 	parent.appendChild(configsPanel)
 }
 
-export function renderPageComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Config) {
+export function renderPageComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Configuration) {
 
 	paginationContainer.innerHTML = ''
 	tilesContainer.innerHTML = ''

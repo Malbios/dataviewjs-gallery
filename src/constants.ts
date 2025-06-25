@@ -4,6 +4,9 @@ export const Preset = {
 	STYLES: 'styles',
 } as const
 
+export type PresetKey = keyof typeof Preset
+export type PresetValue = typeof Preset[PresetKey]
+
 export const Origin = {
 	BOTH: 'both',
 	MINE: 'mine',
@@ -17,6 +20,7 @@ export const ViewMode = {
 } as const
 
 export const Setting = {
+	PRESET: 'preset',
 	ITEMS_PER_ROW: 'items-per-row',
 	ITEMS_PER_PAGE: 'items-per-page',
 	ORIGIN: 'origin',

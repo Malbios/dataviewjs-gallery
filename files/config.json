@@ -1,0 +1,14 @@
+{
+	"prompts-mine": {
+		"view-mode": "all",
+		"show-tags": false
+	},
+	"prompts-other": {
+		"view-mode": "all",
+		"show-tags": false
+	},
+	"styles": {
+		"view-mode": "all",
+		"show-tags": false
+	}
+}

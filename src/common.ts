@@ -1,39 +1,46 @@
 import { type TAbstractFile, type TFile } from 'obsidian'
 import { Origin, Preset, Setting, ViewMode } from './constants'
 import { type DataviewPage, type SortPages } from './interfaces'
-import { Config, PersistedConfig } from './types'
+import { Configuration, PersistedConfigurations, PersistedPresetSettings } from './types'
 
 const configFilePath = 'System/Scripts/gallery/config.json'
 
-export async function updatePersistedConfigValue<T>(name: string, value: T) {
-
-	const config = JSON.parse(await app.vault.adapter.read(configFilePath))
-	config[name] = value
-	await app.vault.adapter.write(configFilePath, JSON.stringify(config, null, 2))
+export async function updatePersistedConfigValue<K extends keyof PersistedPresetSettings>(
+	preset: keyof PersistedConfigurations,
+	name: K,
+	value: PersistedPresetSettings[K]
+) {
+	const raw = JSON.parse(await app.vault.adapter.read(configFilePath))
+	const configurations = raw as PersistedConfigurations
+	configurations[preset][name] = value
+	await app.vault.adapter.write(configFilePath, JSON.stringify(configurations, null, 2))
 }
 
-async function getPersistedConfig(): Promise<PersistedConfig> {
+async function getPersistedPresetSettings(preset: keyof PersistedConfigurations): Promise<PersistedPresetSettings> {
 
 	const raw = await app.vault.adapter.read(configFilePath)
-	return JSON.parse(raw) as PersistedConfig
+	const configurations = JSON.parse(raw) as PersistedConfigurations
+	return configurations[preset]
 }
 
-function getDefaultConfig(inputPreset: string, persistedConfig: PersistedConfig, previousConfig: Config | null = null): Config {
+function getDefaultConfig(preset: string, persistedPresetSettings: PersistedPresetSettings, previousConfig: Configuration | null = null): Configuration {
 
 	const asyncNoop = async (): Promise<void> => { }
 
 	return {
 		[Setting.RESET_GALLERY]: previousConfig?.[Setting.RESET_GALLERY] ?? asyncNoop,
 
+		[Setting.PRESET]: preset,
+
 		[Setting.CURRENT_PAGE_NUM]: previousConfig ? previousConfig[Setting.CURRENT_PAGE_NUM] : 1,
 
 		[Setting.ITEMS]: previousConfig ? previousConfig[Setting.ITEMS] : [],
 		[Setting.TOTAL_PAGES]: previousConfig ? previousConfig[Setting.TOTAL_PAGES] : -1,
 
-		[Setting.VIEW_MODE]: persistedConfig[Setting.VIEW_MODE],
-		[Setting.SHOW_TAGS]: persistedConfig[Setting.SHOW_TAGS],
+		[Setting.VIEW_MODE]: persistedPresetSettings[Setting.VIEW_MODE],
+		[Setting.SHOW_TAGS]: persistedPresetSettings[Setting.SHOW_TAGS],
 
-		[Setting.PAGE_SORT]: getPageSort(inputPreset),
+		[Setting.PAGE_SORT]: getPageSort(preset),
 
 		[Setting.ITEMS_PER_ROW]: 6,
 
@@ -43,9 +50,9 @@ function getDefaultConfig(inputPreset: string, persistedConfig: PersistedConfig,
 	}
 }
 
-export async function getConfig(inputPreset: string, previousConfig: Config | null = null): Promise<Config> {
+export async function getConfig(inputPreset: keyof PersistedConfigurations, previousConfig: Configuration | null = null): Promise<Configuration> {
 
-	let persistedConfig = await getPersistedConfig()
+	let persistedConfig = await getPersistedPresetSettings(inputPreset)
 
 	let config = getDefaultConfig(inputPreset, persistedConfig, previousConfig)
 

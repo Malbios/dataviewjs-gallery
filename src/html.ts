@@ -9,10 +9,13 @@ export function renderLabel(parent: HTMLDivElement, text: string, htmlFor: strin
 	parent.appendChild(labelNode)
 }
 
-export function renderText(parent: HTMLDivElement, containerClass: string, text: string) {
+export function renderText(parent: HTMLDivElement, containerClass: string, text: string, tooltip: string | null = null) {
 
 	const containerNode = document.createElement('div')
 	containerNode.className = containerClass
+
+	if (tooltip)
+		containerNode.title = tooltip
 
 	const textNode = document.createTextNode(text)
 

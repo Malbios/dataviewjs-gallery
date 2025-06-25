@@ -1,14 +1,14 @@
 import { getConfig, includePage } from './common'
 import { Setting } from './constants'
 import { DataviewPage } from './interfaces'
-import { Config } from './types'
+import { Configuration, PersistedConfigurations } from './types'
 import { renderPageComponent, renderSidebarComponent } from './ui-components'
 
-let config: Config | null = null
+let config: Configuration | null = null
 
 async function resetGallery() {
 
-	config = await getConfig(input.preset, config)
+	config = await getConfig(input.preset as keyof PersistedConfigurations, config)
 
 	config[Setting.RESET_GALLERY] = resetGallery
 
@@ -21,7 +21,7 @@ async function renderGallery() {
 		dv.container.innerHTML = ''
 
 	if (!config)
-		config = await getConfig(input.preset)
+		config = await getConfig(input.preset as keyof PersistedConfigurations)
 
 	let viewMode = config[Setting.VIEW_MODE]
 	let origin = config[Setting.ORIGIN]
