@@ -33,3 +33,11 @@ export const Setting = {
 	SHOW_TAGS: 'show-tags',
 	RESET_GALLERY: 'reset-gallery',
 } as const
+
+export const Position = {
+	TOP: 'top',
+	BOTTOM: 'bottom',
+} as const
+
+export type PositionKey = keyof typeof Position
+export type PositionValue = typeof Position[PositionKey]

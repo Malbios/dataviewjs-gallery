@@ -1,6 +1,6 @@
 import { asTFile, createUniqueId, updatePersistedConfigValue } from './common'
-import { Setting, ViewMode } from './constants'
-import { renderButton, renderCheckboxInput, renderImage, renderLabel, renderRadioInput, renderText } from './html'
+import { Position, PositionValue, Setting, ViewMode } from './constants'
+import { renderButton, renderCheckboxInput, renderImage, renderLabel, renderRadioInput } from './html'
 import { DataviewPage } from './interfaces'
 import { Configuration, PersistedConfigurations, PersistedPresetSettings } from './types'
 
@@ -108,16 +108,68 @@ function renderImageComponent(parent: HTMLDivElement, page: DataviewPage) {
 	parent.appendChild(containerNode)
 }
 
-function renderPaginationComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Configuration) {
+function renderPaginationComponent(topPaginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement,
+	bottomPaginationContainer: HTMLDivElement, config: Configuration, position: PositionValue) {
+
+	function getPaginationContainer() {
+		switch (position) {
+			case Position.TOP:
+				return topPaginationContainer
+			case Position.BOTTOM:
+				return bottomPaginationContainer
+			default:
+				throw new Error(`Unhandled position: ${position}`)
+		}
+	}
+
+	const paginationContainer = getPaginationContainer()
 
 	function changePage(newPageNum: number) {
 		config[Setting.CURRENT_PAGE_NUM] = newPageNum
-		renderPageComponent(paginationContainer, tilesContainer, config)
+		renderPageComponent(topPaginationContainer, tilesContainer, bottomPaginationContainer, config)
 	}
 
-	const paginationText = `${config[Setting.CURRENT_PAGE_NUM]} of ${config[Setting.TOTAL_PAGES]}`
+	function renderInputAndText() {
+		const currentPageSpan = document.createElement('span')
+		currentPageSpan.textContent = String(config[Setting.CURRENT_PAGE_NUM])
+		currentPageSpan.style.cursor = 'pointer'
 
-	const paginationTooltip = `${config[Setting.ITEMS].length} items total`
+		const currentPageInput = document.createElement('input')
+		currentPageInput.type = 'number'
+		currentPageInput.value = currentPageSpan.textContent!
+		currentPageInput.style.width = '3em'
+
+		function commitEdit() {
+			const newPage = parseInt(currentPageInput.value, 10)
+
+			if (!isNaN(newPage) && newPage >= 1 && newPage <= config[Setting.TOTAL_PAGES]) {
+				changePage(newPage)
+			}
+		}
+
+		currentPageInput.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') commitEdit()
+		})
+
+		currentPageInput.addEventListener('blur', commitEdit)
+
+		currentPageSpan.addEventListener('click', () => {
+			currentPageSpan.replaceWith(currentPageInput)
+			currentPageInput.focus()
+		})
+
+		const containerNode = document.createElement('div')
+		containerNode.className = 'gallery-pagination-controls-text'
+		containerNode.title = `${config[Setting.ITEMS].length} items total`
+
+		containerNode.appendChild(currentPageSpan)
+
+		const textNode = document.createTextNode(` of ${config[Setting.TOTAL_PAGES]}`)
+
+		containerNode.appendChild(textNode)
+
+		paginationContainer.appendChild(containerNode)
+	}
 
 	renderButton(paginationContainer, '⏮️', () => changePage(1),
 		'Go to first page', config[Setting.CURRENT_PAGE_NUM] === 1)
@@ -125,7 +177,7 @@ function renderPaginationComponent(paginationContainer: HTMLDivElement, tilesCon
 	renderButton(paginationContainer, '⬅', () => changePage(--config[Setting.CURRENT_PAGE_NUM]),
 		'Go to previous page', config[Setting.CURRENT_PAGE_NUM] === 1)
 
-	renderText(paginationContainer, 'gallery-pagination-controls-text', paginationText, paginationTooltip)
+	renderInputAndText()
 
 	renderButton(paginationContainer, '➡', () => changePage(++config[Setting.CURRENT_PAGE_NUM]),
 		'Go to next page', config[Setting.CURRENT_PAGE_NUM] === config[Setting.TOTAL_PAGES])
@@ -278,17 +330,19 @@ function renderConfigurationComponent(parent: HTMLDivElement, config: Configurat
 	parent.appendChild(configsPanel)
 }
 
-export function renderPageComponent(paginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement, config: Configuration) {
+export function renderPageComponent(topPaginationContainer: HTMLDivElement, tilesContainer: HTMLDivElement,
+	bottomPaginationContainer: HTMLDivElement, config: Configuration) {
 
-	paginationContainer.innerHTML = ''
+	topPaginationContainer.innerHTML = ''
 	tilesContainer.innerHTML = ''
+	bottomPaginationContainer.innerHTML = ''
 
 	const start = (config[Setting.CURRENT_PAGE_NUM] - 1) * (config[Setting.ITEMS_PER_PAGE] < 0 ? 0 : config[Setting.ITEMS_PER_PAGE])
 	const end = start + (config[Setting.ITEMS_PER_PAGE] < 0 ? config[Setting.ITEMS].length : config[Setting.ITEMS_PER_PAGE])
 	const subset = config[Setting.ITEMS].slice(start, end)
 
 	if (config[Setting.TOTAL_PAGES] > 1)
-		renderPaginationComponent(paginationContainer, tilesContainer, config)
+		renderPaginationComponent(topPaginationContainer, tilesContainer, bottomPaginationContainer, config, Position.TOP)
 
 	let rowContainer = document.createElement('div')
 
@@ -303,4 +357,7 @@ export function renderPageComponent(paginationContainer: HTMLDivElement, tilesCo
 
 		renderTileComponent(rowContainer, page, config[Setting.SHOW_TAGS])
 	}
+
+	if (config[Setting.TOTAL_PAGES] > 1)
+		renderPaginationComponent(topPaginationContainer, tilesContainer, bottomPaginationContainer, config, Position.BOTTOM)
 }

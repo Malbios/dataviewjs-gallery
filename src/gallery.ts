@@ -41,15 +41,19 @@ async function renderGallery() {
 		cls: 'gallery-container',
 	})
 
-	const paginationContainer = document.createElement('div')
-	paginationContainer.className = 'gallery-pagination-controls'
-	galleryContainer.appendChild(paginationContainer)
+	const topPaginationContainer = document.createElement('div')
+	topPaginationContainer.className = 'gallery-pagination-controls'
+	galleryContainer.appendChild(topPaginationContainer)
 
 	const tilesContainer = document.createElement('div')
 	tilesContainer.className = 'gallery'
 	galleryContainer.appendChild(tilesContainer)
 
-	renderPageComponent(paginationContainer, tilesContainer, config)
+	const bottomPaginationContainer = document.createElement('div')
+	bottomPaginationContainer.className = 'gallery-pagination-controls'
+	galleryContainer.appendChild(bottomPaginationContainer)
+
+	renderPageComponent(topPaginationContainer, tilesContainer, bottomPaginationContainer, config)
 
 	renderSidebarComponent(galleryContainer, config)
 }

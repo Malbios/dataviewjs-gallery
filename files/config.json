@@ -5,7 +5,7 @@
 	},
 	"prompts-other": {
 		"view-mode": "all",
-		"show-tags": false
+		"show-tags": true
 	},
 	"styles": {
 		"view-mode": "all",
