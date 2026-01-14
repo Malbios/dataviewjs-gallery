@@ -165,3 +165,29 @@ export function asTFile(file: TAbstractFile | null): TFile | null {
 
 	return null
 }
+
+function getExtension(filename: string) {
+	return filename
+		.split('?')[0]
+		.split('#')[0]
+		.split('.')
+		.pop()
+		?.toLowerCase() || ''
+}
+
+export function getFileType(filename: string) {
+
+	const ext = getExtension(filename)
+
+	const images = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'avif'])
+
+	const videos = new Set(['mp4', 'webm', 'mov', 'avi', 'mkv', 'm4v', 'ogv'])
+
+	if (images.has(ext))
+		return 'image'
+
+	if (videos.has(ext))
+		return 'video'
+
+	return 'unknown'
+}

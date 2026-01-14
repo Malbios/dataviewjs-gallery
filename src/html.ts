@@ -1,3 +1,5 @@
+import { getFileType } from './common'
+
 export function renderLabel(parent: HTMLDivElement, text: string, htmlFor: string | null = null) {
 
 	const labelNode = document.createElement('label')
@@ -73,11 +75,33 @@ export function renderRadioInput(parent: HTMLDivElement, radioId: string, radioN
 	parent.appendChild(radioNode)
 }
 
-export function renderImage(parent: HTMLDivElement, resourcePath: string, width: number) {
+export function renderMedia(parent: HTMLDivElement, resourcePath: string, width: number) {
 
-	const imageNode = document.createElement('img')
-	imageNode.src = resourcePath
-	imageNode.width = width
+	if (getFileType(resourcePath) === 'video') {
 
-	parent.appendChild(imageNode)
+		const videoNode = document.createElement('video')
+
+		videoNode.src = resourcePath
+		videoNode.width = width
+		videoNode.controls = true
+		videoNode.muted = true
+		videoNode.autoplay = false
+		videoNode.loop = false
+
+		parent.appendChild(videoNode)
+		return
+	}
+
+	if (getFileType(resourcePath) === 'image') {
+
+		const imageNode = document.createElement('img')
+
+		imageNode.src = resourcePath
+		imageNode.width = width
+
+		parent.appendChild(imageNode)
+		return
+	}
+
+	renderText(parent, 'media-error', 'Unsupported media type')
 }

@@ -1,6 +1,6 @@
 import { asTFile, createUniqueId, updatePersistedConfigValue } from './common'
 import { Position, PositionValue, Setting, ViewMode } from './constants'
-import { renderButton, renderCheckboxInput, renderImage, renderLabel, renderRadioInput } from './html'
+import { renderButton, renderCheckboxInput, renderLabel, renderMedia, renderRadioInput } from './html'
 import { DataviewPage } from './interfaces'
 import { Configuration, PersistedConfigurations, PersistedPresetSettings } from './types'
 
@@ -98,7 +98,7 @@ function renderImageComponent(parent: HTMLDivElement, page: DataviewPage) {
 			app.workspace.openLinkText(page.image, '', true)
 		}
 
-		renderImage(parent, resourcePath, 200)
+		renderMedia(parent, resourcePath, 200)
 	}
 
 	const containerNode = document.createElement('div')
